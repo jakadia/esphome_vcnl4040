@@ -1,0 +1,44 @@
+esphome:
+  name: vcnl4040
+  platform: ESP32
+  board: nodemcu-32s
+  includes:
+    - /config/esphome/custom_sensors/vcnl4040.h
+  libraries:
+   - "Adafruit VCNL4040@^1.0.1"
+
+wifi:
+  ssid: !secret ssid
+  password: !secret ssid_pass
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Vcnl4040 Fallback Hotspot"
+    password: !secret pass
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret pass
+
+ota:
+  password: !secret pass
+  
+web_server:
+  port: 80
+  
+sensor:
+- platform: custom
+  lambda: |-
+    auto MyVCNL4040_sensor = new MyVCNL4040();
+    App.register_component(MyVCNL4040_sensor);
+    return {MyVCNL4040_sensor->prox_sensor, MyVCNL4040_sensor->lux_sensor, MyVCNL4040_sensor->rawLight_sensor};
+  sensors:
+  - name: "Proximity sensor"
+  - name: "Lux sensor"
+  - name: "Raw Light sensor"
+
